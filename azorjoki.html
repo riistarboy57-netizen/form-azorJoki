@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>azorJoki - Order Form</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; }
+
+  .header {
+    background: linear-gradient(135deg, #1a0533, #0d1b4b);
+    padding: 18px 24px;
+    text-align: center;
+    border-bottom: 2px solid #7c3aed;
+  }
+  .header h1 { font-size: 26px; color: #a78bfa; letter-spacing: 2px; }
+  .header p { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7c3aed;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1e1b4b;
+  }
+
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #2d2b55;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: #0f0f1a;
+    border: 1px solid #2d2b55;
+    border-radius: 8px;
+    color: #fff;
+    padding: 11px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: #7c3aed;
+  }
+  .form-group select option { background: #1a1a2e; }
+  .form-group textarea { resize: none; height: 70px; }
+
+  .row { display: flex; gap: 12px; }
+  .row .form-group { flex: 1; }
+
+  .note {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  /* Payment */
+  .payment-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #0f0f1a;
+    border: 1.5px solid #2d2b55;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border 0.2s, background 0.2s;
+    position: relative;
+  }
+  .payment-option.active {
+    border-color: #7c3aed;
+    background: #1e1b4b;
+  }
+  .payment-option input[type="radio"] { display: none; }
+  .pay-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .pay-icon.jago { background: #003f5c; }
+  .pay-icon.gopay { background: #00880a; }
+  .pay-icon.ovo { background: #4b006e; }
+
+  .pay-info { flex: 1; }
+  .pay-name { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+  .pay-number { font-size: 13px; color: #7c3aed; font-weight: 600; margin-top: 2px; }
+  .pay-holder { font-size: 11px; color: #64748b; margin-top: 1px; }
+
+  .copy-btn {
+    background: #2d2b55;
+    border: none;
+    color: #a78bfa;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { background: #3730a3; }
+  .copy-btn.copied { color: #4ade80; }
+
+  .selected-payment {
+    background: #1e1b4b;
+    border: 1px dashed #7c3aed;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .selected-payment.show { display: block; }
+  .selected-payment p { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+  .selected-payment .num { font-size: 20px; font-weight: 700; color: #a78bfa; letter-spacing: 1px; }
+  .selected-payment .an { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { opacity: 0.88; }
+
+  .wa-btn {
+    width: 100%;
+    background: #128c7e;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+  .wa-btn:hover { opacity: 0.88; }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4ade80;
+    color: #0f0f1a;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+
+  .badge {
+    display: inline-block;
+    background: #7c3aed22;
+    color: #a78bfa;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚔️ azorJoki</h1>
+  <p>Joki Mobile Legends Terpercaya</p>
+</div>
+
+<div class="container">
+
+  <!-- FORM DATA AKUN ML -->
+  <div class="card">
+    <div class="section-title">📋 Data Akun Mobile Legends</div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>ID ML <span style="color:#ef4444">*</span></label>
+        <input type="text" id="mlId" placeholder="12345678" />
+      </div>
+      <div class="form-group">
+        <label>Server / Zone <span style="color:#ef4444">*</span></label>
+        <input type="text" id="mlZone" placeholder="1234" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Username Ingame</label>
+      <input type="text" id="mlUsername" placeholder="Nama karakter di game" />
+    </div>
+
+    <div class="form-group">
+      <label>Layanan yang Diminta <span style="color:#ef4444">*</span></label>
+      <select id="layanan">
+        <option value="">-- Pilih Layanan --</option>
+        <option>Joki Rank (Mythic)</option>
+        <option>Joki Rank (Legend)</option>
+        <option>Joki Rank (Epic)</option>
+        <option>Joki Win Streak</option>
+        <option>Joki Classic</option>
+        <option>Joki Bintang</option>
+        <option>Push MMR</option>
+        <option>Lainnya</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Rank Saat Ini</label>
+        <select id="rankNow">
+          <option value="">-- Rank --</option>
+          <option>Warrior</option>
+          <option>Elite</option>
+          <option>Master</option>
+          <option>Grandmaster</option>
+          <option>Epic</option>
+          <option>Legend</option>
+          <option>Mythic</option>
+          <option>Mythical Glory</option>
+          <option>Mythical Honor</option>
+          <option>Mythical Immortal</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Target Rank</label>
+        <select id="rankTarget">
+          <option value="">-- Target --</option>
+          <option>Elite</option>
+          <option>Master</option>
+          <option>Grandmaster</option>
+          <option>Epic</option>
+          <option>Legend</option>
+          <option>Mythic</option>
+          <option>Mythical Glory</option>
+          <option>Mythical Honor</option>
+          <option>Mythical Immortal</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password Akun <span style="color:#ef4444">*</span></label>
+      <input type="password" id="mlPass" placeholder="Password akun ML kamu" />
+      <div class="note">🔒 Data kamu aman & rahasia. Ganti password setelah joki selesai.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Login Via</label>
+      <select id="loginVia">
+        <option value="">-- Pilih --</option>
+        <option>Moonton / Email</option>
+        <option>Facebook</option>
+        <option>Google</option>
+        <option>VK</option>
+        <option>Apple ID</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Email Akun (jika perlu)</label>
+      <input type="email" id="mlEmail" placeholder="email@contoh.com" />
+    </div>
+
+    <div class="form-group">
+      <label>Catatan Tambahan</label>
+      <textarea id="catatan" placeholder="Contoh: hero yang boleh dipakai, waktu online, dll..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>No. WhatsApp Kamu <span style="color:#ef4444">*</span></label>
+      <input type="tel" id="noWA" placeholder="08xxxxxxxxxx" />
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="card">
+    <div class="section-title">💳 Metode Pembayaran</div>
+
+    <div class="payment-option" onclick="pilihPayment(this, 'Bank Jago', '108156856124', 'azorJoki')">
+      <input type="radio" name="pay" value="jago">
+      <div class="pay-icon jago">🏦</div>
+      <div class="pay-info">
+        <div class="pay-name">Bank Jago <span class="badge">TRANSFER</span></div>
+        <div class="pay-number">108156856124</div>
+        <div class="pay-holder">a.n azorJoki</div>
+      </div>
+      <button class="copy-btn" onclick="copyNum(event,'108156856124',this)">Salin</button>
+    </div>
+
+    <div class="payment-option" onclick="pilihPayment(this, 'GoPay', '089528059369', 'azorJoki')">
+      <input type="radio" name="pay" value="gopay">
+      <div class="pay-icon gopay">💚</div>
+      <div class="pay-info">
+        <div class="pay-name">GoPay <span class="badge">E-WALLET</span></div>
+        <div class="pay-number">089528059369</div>
+        <div class="pay-holder">a.n azorJoki</div>
+      </div>
+      <button class="copy-btn" onclick="copyNum(event,'089528059369',this)">Salin</button>
+    </div>
+
+    <div class="payment-option" onclick="pilihPayment(this, 'OVO', '089528059369', 'azorJoki')">
+      <input type="radio" name="pay" value="ovo">
+      <div class="pay-icon ovo">💜</div>
+      <div class="pay-info">
+        <div class="pay-name">OVO <span class="badge">E-WALLET</span></div>
+        <div class="pay-number">089528059369</div>
+        <div class="pay-holder">a.n azorJoki</div>
+      </div>
+      <button class="copy-btn" onclick="copyNum(event,'089528059369',this)">Salin</button>
+    </div>
+
+    <div class="selected-payment" id="selectedPayment">
+      <p>Transfer ke:</p>
+      <div class="num" id="selNum">-</div>
+      <div class="an" id="selAn">-</div>
+      <div style="margin-top:8px; font-size:11px; color:#64748b;">Setelah transfer, kirim bukti bayar ke WhatsApp admin.</div>
+    </div>
+  </div>
+
+  <!-- TOMBOL -->
+  <button class="submit-btn" onclick="kirimWA()">⚔️ KONFIRMASI ORDER</button>
+  <button class="wa-btn" onclick="bukaWA()">💬 Chat Admin WhatsApp</button>
+
+</div>
+
+<div class="toast" id="toast">✅ Berhasil disalin!</div>
+
+<script>
+  function pilihPayment(el, nama, nomor, an) {
+    document.querySelectorAll('.payment-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('selNum').textContent = nomor;
+    document.getElementById('selAn').textContent = 'a.n ' + an + ' (' + nama + ')';
+    document.getElementById('selectedPayment').classList.add('show');
+  }
+
+  function copyNum(e, num, btn) {
+    e.stopPropagation();
+    navigator.clipboard.writeText(num).then(() => {
+      btn.textContent = '✓ Tersalin';
+      btn.classList.add('copied');
+      showToast('Nomor berhasil disalin!');
+      setTimeout(() => { btn.textContent = 'Salin'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✅ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function kirimWA() {
+    const mlId = document.getElementById('mlId').value;
+    const mlZone = document.getElementById('mlZone').value;
+    const mlUsername = document.getElementById('mlUsername').value;
+    const layanan = document.getElementById('layanan').value;
+    const rankNow = document.getElementById('rankNow').value;
+    const rankTarget = document.getElementById('rankTarget').value;
+    const mlPass = document.getElementById('mlPass').value;
+    const loginVia = document.getElementById('loginVia').value;
+    const mlEmail = document.getElementById('mlEmail').value;
+    const catatan = document.getElementById('catatan').value;
+    const noWA = document.getElementById('noWA').value;
+    const paySelected = document.querySelector('.payment-option.active .pay-name');
+
+    if (!mlId || !mlZone || !layanan || !mlPass || !noWA) {
+      alert('⚠️ Lengkapi data yang wajib diisi (ID ML, Zone, Layanan, Password, No WA)!');
+      return;
+    }
+    if (!paySelected) {
+      alert('⚠️ Pilih metode pembayaran terlebih dahulu!');
+      return;
+    }
+
+    const pay = paySelected.textContent.trim();
+    const selNum = document.getElementById('selNum').textContent;
+
+    const msg = `*ORDER azorJoki* ⚔️\n\n` +
+      `*ID ML:* ${mlId} (${mlZone})\n` +
+      `*Username:* ${mlUsername || '-'}\n` +
+      `*Layanan:* ${layanan}\n` +
+      `*Rank:* ${rankNow || '-'} → ${rankTarget || '-'}\n` +
+      `*Login Via:* ${loginVia || '-'}\n` +
+      `*Email:* ${mlEmail || '-'}\n` +
+      `*Catatan:* ${catatan || '-'}\n\n` +
+      `*Pembayaran:* ${pay} (${selNum})\n` +
+      `*No WA:* ${noWA}\n\n` +
+      `_Password sudah dikirim via chat._`;
+
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/6289528059369?text=${encoded}`, '_blank');
+  }
+
+  function bukaWA() {
+    window.open('https://wa.me/6289528059369', '_blank');
+  }
+</script>
+</body>
+</html>
